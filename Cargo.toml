@@ -1,0 +1,11 @@
+[package]
+name = "pathdiff"
+version = "0.1.0"
+authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
+description = "Library for diffing paths to obtain relative paths"
+documentation = "https://docs.rs/pathdiff/"
+repository = "https://github.com/Manishearth/pathdiff"
+keywords = ["path", "relative"]
+license = "MIT/Apache-2.0"
+
+[dependencies]
