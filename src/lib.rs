@@ -13,28 +13,31 @@
 
 use std::path::*;
 
-/// Construct a relative path from a provided base directory path to the provided path
+/// Construct a relative path from a provided base directory path to the provided path.
 ///
 /// ```rust
 /// use pathdiff::diff_paths;
 /// use std::path::*;
 ///
-/// let baz: PathBuf = "/foo/bar/baz".into();
-/// let bar: PathBuf = "/foo/bar".into();
-/// let quux: PathBuf = "/foo/bar/quux".into();
-/// assert_eq!(diff_paths(&bar, &baz), Some("../".into()));
-/// assert_eq!(diff_paths(&baz, &bar), Some("baz".into()));
-/// assert_eq!(diff_paths(&quux, &baz), Some("../quux".into()));
-/// assert_eq!(diff_paths(&baz, &quux), Some("../baz".into()));
-/// assert_eq!(diff_paths(&bar, &quux), Some("../".into()));
+/// let baz = "/foo/bar/baz";
+/// let bar = "/foo/bar";
+/// let quux = "/foo/bar/quux";
+/// assert_eq!(diff_paths(bar, baz), Some("../".into()));
+/// assert_eq!(diff_paths(baz, bar), Some("baz".into()));
+/// assert_eq!(diff_paths(quux, baz), Some("../quux".into()));
+/// assert_eq!(diff_paths(baz, quux), Some("../baz".into()));
+/// assert_eq!(diff_paths(bar, quux), Some("../".into()));
 ///
+/// assert_eq!(diff_paths(&baz, &bar.to_string()), Some("baz".into()));
+/// assert_eq!(diff_paths(Path::new(baz), Path::new(bar).to_path_buf()), Some("baz".into()));
 /// ```
-pub fn diff_paths(path: &Path, base: &Path) -> Option<PathBuf> {
-    // This routine is adapted from the *old* Path's `path_relative_from`
-    // function, which works differently from the new `relative_from` function.
-    // In particular, this handles the case on unix where both paths are
-    // absolute but with only the root as the common directory.
-    use std::path::Component;
+pub fn diff_paths<P, B>(path: P, base: B) -> Option<PathBuf>
+where
+    P: AsRef<Path>,
+    B: AsRef<Path>,
+{
+    let path = path.as_ref();
+    let base = base.as_ref();
 
     if path.is_absolute() != base.is_absolute() {
         if path.is_absolute() {
