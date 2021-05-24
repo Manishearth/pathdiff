@@ -75,3 +75,69 @@ where
         Some(comps.iter().map(|c| c.as_os_str()).collect())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_absolute() {
+        assert_eq!(diff_paths("/foo", "/bar"), Some("../foo".into()));
+        assert_eq!(diff_paths("/foo", "bar"), Some("/foo".into()));
+        assert_eq!(diff_paths("foo", "/bar"), None);
+        assert_eq!(diff_paths("foo", "bar"), Some("../foo".into()));
+    }
+
+    #[test]
+    fn test_identity() {
+        assert_eq!(diff_paths(".", "."), Some("".into()));
+        assert_eq!(diff_paths("../foo", "../foo"), Some("".into()));
+        assert_eq!(diff_paths("./foo", "./foo"), Some("".into()));
+        assert_eq!(diff_paths("/foo", "/foo"), Some("".into()));
+        assert_eq!(diff_paths("foo", "foo"), Some("".into()));
+
+        assert_eq!(diff_paths("../foo/bar/baz", "../foo/bar/baz"), Some("".into()));
+        assert_eq!(diff_paths("foo/bar/baz", "foo/bar/baz"), Some("".into()));
+    }
+
+    #[test]
+    fn test_subset() {
+        assert_eq!(diff_paths("foo", "fo"), Some("../foo".into()));
+        assert_eq!(diff_paths("fo", "foo"), Some("../fo".into()));
+    }
+
+    #[test]
+    fn test_empty() {
+        assert_eq!(diff_paths("", ""), Some("".into()));
+        assert_eq!(diff_paths("foo", ""), Some("foo".into()));
+        assert_eq!(diff_paths("", "foo"), Some("..".into()));
+    }
+
+    #[test]
+    fn test_relative() {
+        assert_eq!(diff_paths("../foo", "../bar"), Some("../foo".into()));
+        assert_eq!(diff_paths("../foo", "../foo/bar/baz"), Some("../..".into()));
+        assert_eq!(diff_paths("../foo/bar/baz", "../foo"), Some("bar/baz".into()));
+
+        assert_eq!(diff_paths("foo/bar/baz", "foo"), Some("bar/baz".into()));
+        assert_eq!(diff_paths("foo/bar/baz", "foo/bar"), Some("baz".into()));
+        assert_eq!(diff_paths("foo/bar/baz", "foo/bar/baz"), Some("".into()));
+        assert_eq!(diff_paths("foo/bar/baz", "foo/bar/baz/"), Some("".into()));
+
+        assert_eq!(diff_paths("foo/bar/baz/", "foo"), Some("bar/baz".into()));
+        assert_eq!(diff_paths("foo/bar/baz/", "foo/bar"), Some("baz".into()));
+        assert_eq!(diff_paths("foo/bar/baz/", "foo/bar/baz"), Some("".into()));
+        assert_eq!(diff_paths("foo/bar/baz/", "foo/bar/baz/"), Some("".into()));
+
+        assert_eq!(diff_paths("foo/bar/baz", "foo/"), Some("bar/baz".into()));
+        assert_eq!(diff_paths("foo/bar/baz", "foo/bar/"), Some("baz".into()));
+        assert_eq!(diff_paths("foo/bar/baz", "foo/bar/baz"), Some("".into()));
+    }
+
+    #[test]
+    fn test_current_directory() {
+        assert_eq!(diff_paths(".", "foo"), Some("../.".into()));
+        assert_eq!(diff_paths("foo", "."), Some("foo".into()));
+        assert_eq!(diff_paths("/foo", "/."), Some("foo".into()));
+    }
+}
