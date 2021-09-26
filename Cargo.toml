@@ -8,4 +8,8 @@ repository = "https://github.com/Manishearth/pathdiff"
 keywords = ["path", "relative"]
 license = "MIT/Apache-2.0"
 
+[package.metadata.docs.rs]
+all-features = true
+
 [dependencies]
+camino = { version = "1.0.5", optional = true }
