@@ -11,9 +11,6 @@
 // Adapted from rustc's path_relative_from
 // https://github.com/rust-lang/rust/blob/e1d0de82cc40b666b88d4a6d2c9dcbc81d7ed27f/src/librustc_back/rpath.rs#L116-L158
 
-#[cfg(feature = "camino")]
-extern crate camino;
-
 use std::path::*;
 
 /// Construct a relative path from a provided base directory path to the provided path.
@@ -150,7 +147,7 @@ mod utf8_paths {
 }
 
 #[cfg(feature = "camino")]
-pub use utf8_paths::*;
+pub use crate::utf8_paths::*;
 
 #[cfg(test)]
 mod tests {
