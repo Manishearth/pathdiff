@@ -82,6 +82,8 @@ mod utf8_paths {
 
     /// Construct a relative UTF-8 path from a provided base directory path to the provided path.
     ///
+    /// Requires the `camino` feature.
+    ///
     /// ```rust
     /// # extern crate camino;
     /// use camino::*;
