@@ -14,3 +14,6 @@ all-features = true
 
 [dependencies]
 camino = { version = "1.0.5", optional = true }
+
+[dev-dependencies]
+cfg-if = "1.0.0"
