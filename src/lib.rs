@@ -82,6 +82,8 @@ mod utf8_paths {
 
     /// Construct a relative UTF-8 path from a provided base directory path to the provided path.
     ///
+    /// Requires the `camino` feature.
+    ///
     /// ```rust
     /// # extern crate camino;
     /// use camino::*;
@@ -152,12 +154,24 @@ pub use crate::utf8_paths::*;
 #[cfg(test)]
 mod tests {
     use super::*;
+    use cfg_if::cfg_if;
 
     #[test]
     fn test_absolute() {
-        assert_diff_paths("/foo", "/bar", Some("../foo"));
-        assert_diff_paths("/foo", "bar", Some("/foo"));
-        assert_diff_paths("foo", "/bar", None);
+        fn abs(path: &str) -> String {
+            // Absolute paths look different on Windows vs Unix.
+            cfg_if! {
+                if #[cfg(windows)] {
+                    format!("C:\\{}", path)
+                } else {
+                    format!("/{}", path)
+                }
+            }
+        }
+
+        assert_diff_paths(&abs("foo"), &abs("bar"), Some("../foo"));
+        assert_diff_paths(&abs("foo"), "bar", Some(&abs("foo")));
+        assert_diff_paths("foo", &abs("bar"), None);
         assert_diff_paths("foo", "bar", Some("../foo"));
     }
 
