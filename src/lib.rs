@@ -19,17 +19,20 @@ use std::path::*;
 /// use pathdiff::diff_paths;
 /// use std::path::*;
 ///
-/// let baz = "/foo/bar/baz";
-/// let bar = "/foo/bar";
-/// let quux = "/foo/bar/quux";
-/// assert_eq!(diff_paths(bar, baz), Some("../".into()));
-/// assert_eq!(diff_paths(baz, bar), Some("baz".into()));
-/// assert_eq!(diff_paths(quux, baz), Some("../quux".into()));
-/// assert_eq!(diff_paths(baz, quux), Some("../baz".into()));
-/// assert_eq!(diff_paths(bar, quux), Some("../".into()));
+/// assert_eq!(diff_paths("/foo/bar",      "/foo/bar/baz"),  Some("../".into()));
+/// assert_eq!(diff_paths("/foo/bar/baz",  "/foo/bar"),      Some("baz".into()));
+/// assert_eq!(diff_paths("/foo/bar/quux", "/foo/bar/baz"),  Some("../quux".into()));
+/// assert_eq!(diff_paths("/foo/bar/baz",  "/foo/bar/quux"), Some("../baz".into()));
+/// assert_eq!(diff_paths("/foo/bar",      "/foo/bar/quux"), Some("../".into()));
 ///
-/// assert_eq!(diff_paths(&baz, &bar.to_string()), Some("baz".into()));
-/// assert_eq!(diff_paths(Path::new(baz), Path::new(bar).to_path_buf()), Some("baz".into()));
+/// assert_eq!(
+///     diff_paths(&"/foo/bar/baz", "/foo/bar".to_string()),
+///     Some("baz".into())
+/// );
+/// assert_eq!(
+///     diff_paths(Path::new("/foo/bar/baz"), Path::new("/foo/bar").to_path_buf()),
+///     Some("baz".into())
+/// );
 /// ```
 pub fn diff_paths<P, B>(path: P, base: B) -> Option<PathBuf>
 where
@@ -89,17 +92,20 @@ mod utf8_paths {
     /// use camino::*;
     /// use pathdiff::diff_utf8_paths;
     ///
-    /// let baz = "/foo/bar/baz";
-    /// let bar = "/foo/bar";
-    /// let quux = "/foo/bar/quux";
-    /// assert_eq!(diff_utf8_paths(bar, baz), Some("../".into()));
-    /// assert_eq!(diff_utf8_paths(baz, bar), Some("baz".into()));
-    /// assert_eq!(diff_utf8_paths(quux, baz), Some("../quux".into()));
-    /// assert_eq!(diff_utf8_paths(baz, quux), Some("../baz".into()));
-    /// assert_eq!(diff_utf8_paths(bar, quux), Some("../".into()));
+    /// assert_eq!(diff_utf8_paths("/foo/bar",      "/foo/bar/baz"),  Some("../".into()));
+    /// assert_eq!(diff_utf8_paths("/foo/bar/baz",  "/foo/bar"),      Some("baz".into()));
+    /// assert_eq!(diff_utf8_paths("/foo/bar/quux", "/foo/bar/baz"),  Some("../quux".into()));
+    /// assert_eq!(diff_utf8_paths("/foo/bar/baz",  "/foo/bar/quux"), Some("../baz".into()));
+    /// assert_eq!(diff_utf8_paths("/foo/bar",      "/foo/bar/quux"), Some("../".into()));
     ///
-    /// assert_eq!(diff_utf8_paths(&baz, &bar.to_string()), Some("baz".into()));
-    /// assert_eq!(diff_utf8_paths(Utf8Path::new(baz), Utf8Path::new(bar).to_path_buf()), Some("baz".into()));
+    /// assert_eq!(
+    ///     diff_utf8_paths(&"/foo/bar/baz", "/foo/bar".to_string()),
+    ///     Some("baz".into())
+    /// );
+    /// assert_eq!(
+    ///     diff_utf8_paths(Utf8Path::new("/foo/bar/baz"), Utf8Path::new("/foo/bar").to_path_buf()),
+    ///     Some("baz".into())
+    /// );
     /// ```
     #[cfg_attr(docsrs, doc(cfg(feature = "camino")))]
     pub fn diff_utf8_paths<P, B>(path: P, base: B) -> Option<Utf8PathBuf>
