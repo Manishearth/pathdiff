@@ -25,6 +25,11 @@ use std::path::*;
 /// assert_eq!(diff_paths("/foo/bar/baz",  "/foo/bar/quux"), Some("../baz".into()));
 /// assert_eq!(diff_paths("/foo/bar",      "/foo/bar/quux"), Some("../".into()));
 ///
+/// assert_eq!(diff_paths("/foo/bar",      "baz"),           Some("/foo/bar".into()));
+/// assert_eq!(diff_paths("/foo/bar",      "/baz"),          Some("../foo/bar".into()));
+/// assert_eq!(diff_paths("baz",           "/foo/bar"),      None);
+/// assert_eq!(diff_paths("foo",           "bar"),           Some("../foo".into()));
+///
 /// assert_eq!(
 ///     diff_paths(&"/foo/bar/baz", "/foo/bar".to_string()),
 ///     Some("baz".into())
@@ -97,6 +102,11 @@ mod utf8_paths {
     /// assert_eq!(diff_utf8_paths("/foo/bar/quux", "/foo/bar/baz"),  Some("../quux".into()));
     /// assert_eq!(diff_utf8_paths("/foo/bar/baz",  "/foo/bar/quux"), Some("../baz".into()));
     /// assert_eq!(diff_utf8_paths("/foo/bar",      "/foo/bar/quux"), Some("../".into()));
+    ///
+    /// assert_eq!(diff_utf8_paths("/foo/bar",      "baz"),           Some("/foo/bar".into()));
+    /// assert_eq!(diff_utf8_paths("/foo/bar",      "/baz"),          Some("../foo/bar".into()));
+    /// assert_eq!(diff_utf8_paths("baz",           "/foo/bar"),      None);
+    /// assert_eq!(diff_utf8_paths("foo",           "bar"),           Some("../foo".into()));
     ///
     /// assert_eq!(
     ///     diff_utf8_paths(&"/foo/bar/baz", "/foo/bar".to_string()),
