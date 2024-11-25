@@ -1,7 +1,7 @@
 [package]
 name = "pathdiff"
 edition = "2018"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Manish Goregaokar <manishsmail@gmail.com>"]
 description = "Library for diffing paths to obtain relative paths"
 documentation = "https://docs.rs/pathdiff/"
