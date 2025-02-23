@@ -57,6 +57,14 @@ where
     } else {
         let mut ita = path.components();
         let mut itb = base.components();
+
+        // ./foo and foo are the same
+        if let Some(Component::CurDir) = ita.clone().next() {
+            ita.next();
+        }
+        if let Some(Component::CurDir) = itb.clone().next() {
+            itb.next();
+        }
         let mut comps: Vec<Component> = vec![];
         loop {
             match (ita.next(), itb.next()) {
@@ -198,6 +206,9 @@ mod tests {
         assert_diff_paths("./foo", "./foo", Some(""));
         assert_diff_paths("/foo", "/foo", Some(""));
         assert_diff_paths("foo", "foo", Some(""));
+        assert_diff_paths("./foo", "foo", Some(""));
+        assert_diff_paths("foo", "./foo", Some(""));
+        assert_diff_paths("foo/foo", "./foo/foo", Some(""));
 
         assert_diff_paths("../foo/bar/baz", "../foo/bar/baz", Some("".into()));
         assert_diff_paths("foo/bar/baz", "foo/bar/baz", Some(""));
@@ -221,6 +232,8 @@ mod tests {
         assert_diff_paths("../foo", "../bar", Some("../foo"));
         assert_diff_paths("../foo", "../foo/bar/baz", Some("../.."));
         assert_diff_paths("../foo/bar/baz", "../foo", Some("bar/baz"));
+        assert_diff_paths("../foo", "bar", Some("../../foo"));
+        assert_diff_paths("foo", "../bar", None);
 
         assert_diff_paths("foo/bar/baz", "foo", Some("bar/baz"));
         assert_diff_paths("foo/bar/baz", "foo/bar", Some("baz"));
@@ -242,6 +255,10 @@ mod tests {
         assert_diff_paths(".", "foo", Some("../."));
         assert_diff_paths("foo", ".", Some("foo"));
         assert_diff_paths("/foo", "/.", Some("foo"));
+        
+        assert_diff_paths("./foo/bar/baz", "foo", Some("bar/baz"));
+        assert_diff_paths("foo/bar/baz", "./foo", Some("bar/baz"));
+        assert_diff_paths("./foo/bar/baz", "./foo", Some("bar/baz"));
     }
 
     fn assert_diff_paths(path: &str, base: &str, expected: Option<&str>) {
