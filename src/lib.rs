@@ -57,6 +57,7 @@ where
     } else {
         let mut ita = path.components();
         let mut itb = base.components();
+        let mut comps: Vec<Component> = vec![];
 
         // ./foo and foo are the same
         if let Some(Component::CurDir) = ita.clone().next() {
@@ -65,7 +66,7 @@ where
         if let Some(Component::CurDir) = itb.clone().next() {
             itb.next();
         }
-        let mut comps: Vec<Component> = vec![];
+
         loop {
             match (ita.next(), itb.next()) {
                 (None, None) => break,
@@ -144,6 +145,15 @@ mod utf8_paths {
             let mut ita = path.components();
             let mut itb = base.components();
             let mut comps: Vec<Utf8Component> = vec![];
+
+            // ./foo and foo are the same
+            if let Some(Utf8Component::CurDir) = ita.clone().next() {
+                ita.next();
+            }
+            if let Some(Utf8Component::CurDir) = itb.clone().next() {
+                itb.next();
+            }
+
             loop {
                 match (ita.next(), itb.next()) {
                     (None, None) => break,
@@ -255,7 +265,7 @@ mod tests {
         assert_diff_paths(".", "foo", Some("../."));
         assert_diff_paths("foo", ".", Some("foo"));
         assert_diff_paths("/foo", "/.", Some("foo"));
-        
+
         assert_diff_paths("./foo/bar/baz", "foo", Some("bar/baz"));
         assert_diff_paths("foo/bar/baz", "./foo", Some("bar/baz"));
         assert_diff_paths("./foo/bar/baz", "./foo", Some("bar/baz"));
